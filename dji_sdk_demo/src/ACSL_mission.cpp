@@ -58,6 +58,7 @@ int main(int argc, char **argv)
   ros::Subscriber twistSub = nh.subscribe("turtle1/cmd_vel", 10, &twist_callback);
 
   ros::Subscriber ACSL_local_set = nh.subscribe("ACSL/local_position", 10, &ACSL_local_position_callback);
+  ros::Subscriber ACSL_local_set_delta = nh.subscribe("ACSL/local_position_delta", 10, &ACSL_local_position_delta_callback);
 
   // Activate
   // if (drone_activate() == false)
@@ -93,6 +94,9 @@ int main(int argc, char **argv)
         << "| [u] user control                                               |"
         << std::endl;
     std::cout
+        << "| [k] user delta control                                         |"
+        << std::endl;
+    std::cout
         << "| [h] go home                                                    |"
         << std::endl;
     std::cout
@@ -116,6 +120,9 @@ int main(int argc, char **argv)
     case 'u':
       drone_user_control();
       break;
+    case 'k':
+      drone_user_delta_control();
+      break;
     case 'h':
       drone_gohome();
       break;
@@ -129,6 +136,12 @@ int main(int argc, char **argv)
 
   return 0;
 }
+bool drone_user_delta_control(void)
+{
+  ROS_INFO("drone_user_control_delta");
+  std::cout<< "you must publish ACSL/local_position_delta topic" << std::endl;
+  ROS_INFO("you must publish ACSL/local_position_delta topic");
+}
 
 bool drone_user_control(void)
 {
@@ -137,8 +150,8 @@ bool drone_user_control(void)
       0,
   };
 
-  std::cout << "you must publish ACSL/local_position" << std::endl;
-  ROS_INFO("you must publish ACSL/local_position");
+  std::cout << "you must publish ACSL/local_position topic" << std::endl;
+  ROS_INFO("you must publish ACSL/local_position topic");
   /*
   std::cout << "number of local control position" << std::endl
             << ":";
@@ -414,13 +427,13 @@ void local_position_ctrl(double &xCmd, double &yCmd, double &zCmd)
   if (((std::abs(xCmd)) < 0.1) && ((std::abs(yCmd)) < 0.1) &&
       (local_position.point.z > (target_offset_z - 0.1)) && (local_position.point.z < (target_offset_z + 0.1)))
   {
-      ROS_INFO("user control finished");
+      //ROS_INFO("user control finished");
   }
 }
 
 void ACSL_local_position_callback(const dji_sdk::ACSL_local_position::ConstPtr& msg)
 {
-  ROS_INFO("ACSL_local_position_callback");
+  //ROS_INFO("ACSL_local_position_callback");
   local_set_target(msg->targetX, msg->targetY, msg->targetZ, msg->targetYaw);
   g_flag_drone_local_set = 1;
   ROS_INFO("MessageSequence : %d", msg->seq);
@@ -428,6 +441,20 @@ void ACSL_local_position_callback(const dji_sdk::ACSL_local_position::ConstPtr& 
   ROS_INFO("targetY : %f", msg->targetY);
   ROS_INFO("targetZ : %f", msg->targetZ);
   ROS_INFO("targetYaw : %f", msg->targetYaw);
+
+}
+
+void ACSL_local_position_delta_callback(const dji_sdk::ACSL_local_position_delta::ConstPtr& msg)
+{
+  ROS_INFO("ACSL_local_position_delta_callback");
+  
+  g_flag_drone_local_set = 1;
+  local_set_target(local_position.point.x + msg->deltaX, local_position.point.y + msg->deltaY, local_position.point.z + msg->deltaZ, target_yaw + msg->deltaYaw);
+  ROS_INFO("MessageSequence : %d", msg->seq);
+  ROS_INFO("targetX : %f", local_position.point.x + msg->deltaX);
+  ROS_INFO("targetY : %f", local_position.point.y + msg->deltaY);
+  ROS_INFO("targetZ : %f", local_position.point.z + msg->deltaZ);
+  ROS_INFO("targetYaw : %f", target_yaw + msg->deltaYaw);
 
 }
 

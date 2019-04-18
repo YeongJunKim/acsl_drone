@@ -27,6 +27,7 @@
 #include <dji_sdk/QueryDroneVersion.h>
 #include <dji_sdk/SetLocalPosRef.h>
 #include <dji_sdk/ACSL_local_position.h>
+#include <dji_sdk/ACSL_local_position_delta.h>
 
 
 #include <tf/tf.h>
@@ -143,7 +144,11 @@ void gps_health_callback(const std_msgs::UInt8::ConstPtr& msg);
 
 void ACSL_local_position_callback(const dji_sdk::ACSL_local_position::ConstPtr& msg);
 
+void ACSL_local_position_delta_callback(const dji_sdk::ACSL_local_position_delta::ConstPtr& msg);
+
 // user function
+
+bool drone_user_delta_control(void);
 
 bool drone_user_control(void);
 

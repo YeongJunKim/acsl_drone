@@ -189,6 +189,14 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
+add_executable(ACSL_local_position_delta_publisher
+        src/ACSL_local_position_delta_publisher.cpp)
+target_link_libraries(ACSL_local_position_delta_publisher
+        ${catkin_LIBRARIES}
+        ${DJIOSDK_LIBRARIES}
+        )
+add_dependencies(ACSL_local_position_delta_publisher dji_sdk_generate_messages_cpp)
+
 add_executable(ACSL_local_position_publisher
         src/ACSL_local_position_publisher.cpp)
 target_link_libraries(ACSL_local_position_publisher
