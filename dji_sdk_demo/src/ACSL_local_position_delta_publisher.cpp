@@ -71,6 +71,12 @@ int main(int argc, char **argv)
           break;
           case 'b':
           gain = gain - 0.01;
+          break;
+          case 'h':
+          cout << "input your gain : ";
+          cin >> gain;
+          break;
+          
         }
 
         cout << "input" << a << endl;

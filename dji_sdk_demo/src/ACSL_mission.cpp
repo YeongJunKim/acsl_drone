@@ -349,7 +349,10 @@ void attitude_callback(const geometry_msgs::QuaternionStamped::ConstPtr &msg)
 
 void local_position_callback(const geometry_msgs::PointStamped::ConstPtr &msg)
 {
-  //ROS_INFO("local_position_callback ");
+  ROS_INFO("local_position_callback ");
+  ROS_INFO("x = %f", local_position.point.x);
+  ROS_INFO("y = %f", local_position.point.y);
+  ROS_INFO("z = %f", local_position.point.z);
   current_local_pos = msg->point;
 
   static ros::Time start_time = ros::Time::now();
@@ -449,6 +452,12 @@ void ACSL_local_position_delta_callback(const dji_sdk::ACSL_local_position_delta
   ROS_INFO("ACSL_local_position_delta_callback");
   
   g_flag_drone_local_set = 1;
+
+  ROS_INFO("now local position");
+  ROS_INFO("x = %f", local_position.point.x);
+  ROS_INFO("y = %f", local_position.point.y);
+  ROS_INFO("z = %f", local_position.point.z);
+
   local_set_target(local_position.point.x + msg->deltaX, local_position.point.y + msg->deltaY, local_position.point.z + msg->deltaZ, target_yaw + msg->deltaYaw);
   ROS_INFO("MessageSequence : %d", msg->seq);
   ROS_INFO("targetX : %f", local_position.point.x + msg->deltaX);
